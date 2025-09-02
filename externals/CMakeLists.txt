@@ -63,38 +63,6 @@ if (NOT TARGET SDL3::SDL3)
     add_subdirectory(sdl3)
 endif()
 
-# vulkan-headers
-if (NOT TARGET Vulkan::Headers)
-    set(VULKAN_HEADERS_ENABLE_MODULE OFF)
-    add_subdirectory(vulkan-headers)
-endif()
-
-# VMA
-if (NOT TARGET GPUOpen::VulkanMemoryAllocator)
-    add_subdirectory(vma)
-endif()
-
-# RenderDoc
-if (NOT TARGET RenderDoc::API)
-    add_library(renderdoc INTERFACE)
-    target_include_directories(renderdoc INTERFACE ./renderdoc)
-    add_library(RenderDoc::API ALIAS renderdoc)
-endif()
-
-# glslang
-if (NOT TARGET glslang::glslang)
-    set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "")
-    set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "")
-    set(ENABLE_SPVREMAPPER OFF CACHE BOOL "")
-    set(ENABLE_CTEST OFF CACHE BOOL "")
-    set(ENABLE_HLSL OFF CACHE BOOL "")
-    set(BUILD_EXTERNAL OFF CACHE BOOL "")
-    set(ENABLE_OPT OFF CACHE BOOL "")
-    add_subdirectory(glslang)
-    file(COPY glslang/SPIRV DESTINATION glslang/glslang FILES_MATCHING PATTERN "*.h")
-    target_include_directories(glslang INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/glslang")
-endif()
-
 # Robin-map
 if (NOT TARGET tsl::robin_map)
     add_subdirectory(robin-map)
@@ -137,12 +105,6 @@ if (NOT TARGET Zydis::Zydis)
     add_subdirectory(zydis)
 endif()
 
-# sirit
-add_subdirectory(sirit)
-if (WIN32)
-    target_compile_options(sirit PUBLIC "-Wno-error=unused-command-line-argument")
-endif()
-
 # half
 if (NOT TARGET half::half)
     add_library(half INTERFACE)
@@ -161,53 +123,10 @@ if (NOT TARGET PNG::PNG)
     add_library(PNG::PNG ALIAS png_static)
 endif()
 
-# Dear ImGui
-add_library(Dear_ImGui
-        dear_imgui/imgui.cpp
-        dear_imgui/imgui_demo.cpp
-        dear_imgui/imgui_draw.cpp
-        dear_imgui/imgui_internal.h
-        dear_imgui/imgui_tables.cpp
-        dear_imgui/imgui_widgets.cpp
-)
-target_include_directories(Dear_ImGui INTERFACE dear_imgui/)
-
-# Tracy
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    option(TRACY_ENABLE "" OFF)
-else()
-    option(TRACY_ENABLE "" ON)
-endif()
-option(TRACY_NO_CRASH_HANDLER "" ON) # Otherwise texture cache exceptions will be treaten as a crash
-option(TRACY_ON_DEMAND "" ON)
-option(TRACY_NO_FRAME_IMAGE "" ON)
-option(TRACY_FIBERS "" OFF) # For AmdGpu frontend profiling, disabled due to instability
-option(TRACY_NO_SYSTEM_TRACING "" ON)
-option(TRACY_NO_CALLSTACK "" ON)
-option(TRACY_NO_CODE_TRANSFER "" ON)
-option(TRACY_NO_SAMPLING "" ON)
-option(TRACY_ONLY_LOCALHOST "" ON)
-option(TRACY_NO_CONTEXT_SWITCH "" ON)
-add_subdirectory(tracy)
-
 # pugixml
 if (NOT TARGET pugixml::pugixml)
     add_subdirectory(pugixml)
 endif()
-
-# libusb
-if (NOT TARGET libusb::usb)
-    add_subdirectory(ext-libusb)
-    add_library(libusb::usb ALIAS usb-1.0)
-endif()
-
-# Discord RPC
-if (ENABLE_DISCORD_RPC)
-    add_subdirectory(discord-rpc)
-endif()
-
-# GCN Headers
-add_subdirectory(gcn)
 
 # stb
 if (NOT TARGET stb::headers)
@@ -227,14 +146,5 @@ if (APPLE)
         option(BUILD_TZ_LIB "" ON)
         option(USE_SYSTEM_TZ_DB "" ON)
         add_subdirectory(date)
-    endif()
-
-    # MoltenVK
-    if (NOT TARGET MoltenVK)
-        add_subdirectory(MoltenVK)
-    endif()
-
-    if (NOT TARGET epoll-shim)
-        add_subdirectory(epoll-shim)
     endif()
 endif()

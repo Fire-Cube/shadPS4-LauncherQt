@@ -314,6 +314,19 @@ SettingsDialog::SettingsDialog(std::shared_ptr<gui_settings> gui_settings,
             }
         });
 
+        connect(ui->browse_shad_path, &QPushButton::clicked, this, [this]() {
+            const auto shad_folder_path = m_gui_settings->GetValue(gui::gen_shadFolder).toString();
+            QString initial_path;
+
+            QString shad_folder_path_string =
+                QFileDialog::getExistingDirectory(this, tr("Select the shadPS4 folder"), initial_path);
+
+            auto file_path = Common::FS::PathFromQString(shad_folder_path_string);
+            if (!file_path.empty()) {
+                ui->lineEdit_shad_path->setText(shad_folder_path_string);
+                m_gui_settings->SetValue(gui::gen_shadFolder, shad_folder_path_string);
+            }
+        });
         connect(ui->browseButton, &QPushButton::clicked, this, [this]() {
             const auto save_data_path = Config::GetSaveDataPath();
             QString initial_path;
@@ -481,6 +494,7 @@ void SettingsDialog::LoadValuesFromConfig() {
     const auto dlc_folder_path = Config::getAddonInstallDir();
     QString dlc_folder_path_string;
     Common::FS::PathToQString(dlc_folder_path_string, dlc_folder_path);
+    ui->lineEdit_shad_path->setText(m_gui_settings->GetValue(gui::gen_shadFolder).toString());
     ui->currentDLCFolder->setText(dlc_folder_path_string);
 
     ui->consoleLanguageComboBox->setCurrentIndex(

@@ -1207,7 +1207,7 @@ void MainWindow::StartEmulator(std::filesystem::path path) {
         return;
     }
     isGameRunning = true;
-    QString exe = R"(C:\Users\ben7\Desktop\shadPS4\fork\shadPS4\Build\x64-Clang-Release\shadps4.exe)";
+    QString exe = m_gui_settings->GetValue(gui::gen_shadFolder).toString() + "/shadps4.exe";
     QStringList args{
         "--game",
         QString::fromStdWString(path.wstring())

@@ -459,7 +459,7 @@ if (APPLE)
     endif()
 
     # Replacement for std::chrono::time_zone
-    target_link_libraries(shadps4 PRIVATE date::date-tz epoll-shim)
+    target_link_libraries(shadps4 PRIVATE date::date-tz)
 endif()
 
 

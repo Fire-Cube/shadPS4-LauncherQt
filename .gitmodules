@@ -10,17 +10,9 @@
 	path = externals/fmt
 	url = https://github.com/shadps4-emu/ext-fmt.git
 	shallow = true
-[submodule "externals/vulkan-headers"]
-	path = externals/vulkan-headers
-	url = https://github.com/KhronosGroup/Vulkan-Headers.git
-	shallow = true
 [submodule "externals/vma"]
 	path = externals/vma
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
-	shallow = true
-[submodule "externals/glslang"]
-	path = externals/glslang
-	url = https://github.com/KhronosGroup/glslang.git
 	shallow = true
 [submodule "externals/robin-map"]
 	path = externals/robin-map
@@ -42,17 +34,9 @@
 	path = externals/zydis
 	url = https://github.com/zyantific/zydis.git
 	shallow = true
-[submodule "externals/sirit"]
-	path = externals/sirit
-	url = https://github.com/shadps4-emu/sirit.git
-	shallow = true
 [submodule "externals/xxhash"]
 	path = externals/xxhash
 	url = https://github.com/Cyan4973/xxHash.git
-	shallow = true
-[submodule "externals/tracy"]
-	path = externals/tracy
-	url = https://github.com/shadps4-emu/tracy.git
 	shallow = true
 [submodule "externals/ext-boost"]
 	path = externals/ext-boost
@@ -70,18 +54,9 @@
 	path = externals/half
 	url = https://github.com/ROCm/half.git
 	shallow = true
-[submodule "externals/dear_imgui"]
-	path = externals/dear_imgui
-	url = https://github.com/shadps4-emu/ext-imgui.git
-	shallow = true
-	branch = docking
 [submodule "externals/pugixml"]
 	path = externals/pugixml
 	url = https://github.com/zeux/pugixml.git
-	shallow = true
-[submodule "externals/discord-rpc"]
-	path = externals/discord-rpc
-	url = https://github.com/shadps4-emu/ext-discord-rpc.git
 	shallow = true
 [submodule "externals/LibAtrac9"]
 	path = externals/LibAtrac9
@@ -91,24 +66,6 @@
 	path = externals/libpng
 	url = https://github.com/pnggroup/libpng
 	shallow = true
-[submodule "externals/MoltenVK/SPIRV-Cross"]
-	path = externals/MoltenVK/SPIRV-Cross
-	url = https://github.com/KhronosGroup/SPIRV-Cross
-	shallow = true
-[submodule "externals/MoltenVK/MoltenVK"]
-	path = externals/MoltenVK/MoltenVK
-	url = https://github.com/KhronosGroup/MoltenVK
-	shallow = true
-[submodule "externals/MoltenVK/cereal"]
-	path = externals/MoltenVK/cereal
-	url = https://github.com/USCiLab/cereal
-	shallow = true
-[submodule "externals/ext-libusb"]
-	path = externals/ext-libusb
-	url = https://github.com/shadps4-emu/ext-libusb.git
-[submodule "externals/epoll-shim"]
-	path = externals/epoll-shim
-	url = https://github.com/jiixyj/epoll-shim.git
 [submodule "externals/hwinfo"]
 	path = externals/hwinfo
 	url = https://github.com/shadps4-emu/ext-hwinfo

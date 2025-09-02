@@ -218,7 +218,7 @@ if(NOT GIT_REMOTE_URL_LOWER MATCHES "shadps4-emu/shadps4" OR NOT GIT_BRANCH STRE
     set(ENABLE_UPDATER OFF)
 endif()
 
-if(WIN32 AND ENABLE_QT_GUI AND NOT CMAKE_PREFIX_PATH)
+if(WIN32 AND NOT CMAKE_PREFIX_PATH)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
 endif ()
 
@@ -255,29 +255,27 @@ endif()
 add_subdirectory(externals)
 include_directories(src)
 
-if(ENABLE_QT_GUI)
-    find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent LinguistTools Network Multimedia)
-    qt_standard_project_setup()
-    set(CMAKE_AUTORCC ON)
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_AUTOUIC ON)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent LinguistTools Network Multimedia)
+qt_standard_project_setup()
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
 
-    set(QT_TRANSLATIONS "${PROJECT_SOURCE_DIR}/src/qt_gui/translations")
-    file(GLOB_RECURSE TRANSLATIONS_TS ${QT_TRANSLATIONS}/*.ts)
+set(QT_TRANSLATIONS "${PROJECT_SOURCE_DIR}/src/qt_gui/translations")
+file(GLOB_RECURSE TRANSLATIONS_TS ${QT_TRANSLATIONS}/*.ts)
 
-    set_source_files_properties(${TRANSLATIONS_TS} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/translations")
-    qt_add_translation(TRANSLATIONS_QM ${TRANSLATIONS_TS})
+set_source_files_properties(${TRANSLATIONS_TS} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/translations")
+qt_add_translation(TRANSLATIONS_QM ${TRANSLATIONS_TS})
 
-    set(TRANSLATIONS_QRC ${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc)
-    file(WRITE ${TRANSLATIONS_QRC} "<RCC><qresource prefix=\"translations\">\n")
-    foreach (QM ${TRANSLATIONS_QM})
-        get_filename_component(QM_FILE ${QM} NAME)
-        file(APPEND ${TRANSLATIONS_QRC} "<file>${QM_FILE}</file>\n")
-    endforeach (QM)
-    file(APPEND ${TRANSLATIONS_QRC} "</qresource></RCC>")
+set(TRANSLATIONS_QRC ${CMAKE_CURRENT_BINARY_DIR}/translations/translations.qrc)
+file(WRITE ${TRANSLATIONS_QRC} "<RCC><qresource prefix=\"translations\">\n")
+foreach (QM ${TRANSLATIONS_QM})
+    get_filename_component(QM_FILE ${QM} NAME)
+    file(APPEND ${TRANSLATIONS_QRC} "<file>${QM_FILE}</file>\n")
+endforeach (QM)
+file(APPEND ${TRANSLATIONS_QRC} "</qresource></RCC>")
 
-    qt_add_resources(TRANSLATIONS ${TRANSLATIONS_QRC})
-endif()
+qt_add_resources(TRANSLATIONS ${TRANSLATIONS_QRC})
 
 set(CORE src/core/file_format/pfs.h
          src/core/file_format/psf.cpp
@@ -363,13 +361,8 @@ set(COMMON src/common/logging/backend.cpp
            src/common/scm_rev.h
 )
 
-if (ENABLE_DISCORD_RPC)
-    list(APPEND COMMON src/common/discord_rpc_handler.cpp src/common/discord_rpc_handler.h)
-endif()
-
 # The above is shared in SDL and Qt version (TODO share them all)
 
-if(ENABLE_QT_GUI)
 qt_add_resources(RESOURCE_FILES src/shadps4.qrc)
 
 if (ENABLE_UPDATER)
@@ -433,7 +426,6 @@ set(QT_GUI src/qt_gui/about_dialog.cpp
            ${TRANSLATIONS}
            ${UPDATER}
 )
-endif()
 
 qt_add_executable(shadps4
     ${AUDIO_CORE}
@@ -448,7 +440,7 @@ qt_add_executable(shadps4
 create_target_directory_groups(shadps4)
 
 target_link_libraries(shadps4 PRIVATE magic_enum::magic_enum fmt::fmt toml11::toml11 tsl::robin_map xbyak::xbyak  FFmpeg::ffmpeg half::half ZLIB::ZLIB PNG::PNG)
-target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 xxHash::xxhash Zydis::Zydis pugixml::pugixml stb::headers libusb::usb SDL3::SDL3 lfreist-hwinfo::hwinfo)
+target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 xxHash::xxhash Zydis::Zydis pugixml::pugixml stb::headers SDL3::SDL3 lfreist-hwinfo::hwinfo)
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -461,37 +453,6 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 
 if (APPLE)
-    # Include MoltenVK, along with an ICD file so it can be found by the system Vulkan loader if used for loading layers.
-    if (ENABLE_QT_GUI)
-        set(MVK_BUNDLE_PATH "Resources/vulkan/icd.d")
-        set_property(TARGET shadps4 APPEND PROPERTY BUILD_RPATH "@executable_path/../${MVK_BUNDLE_PATH}")
-        set(MVK_DST ${CMAKE_CURRENT_BINARY_DIR}/shadps4.app/Contents/${MVK_BUNDLE_PATH})
-
-        add_custom_command(
-            OUTPUT ${MVK_DST}
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${MVK_DST})
-    else()
-        set_property(TARGET shadps4 APPEND PROPERTY BUILD_RPATH "@executable_path")
-        set(MVK_DST ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-
-    set(MVK_DYLIB_SRC ${CMAKE_CURRENT_BINARY_DIR}/externals/MoltenVK/libMoltenVK.dylib)
-    set(MVK_DYLIB_DST ${MVK_DST}/libMoltenVK.dylib)
-    set(MVK_ICD_SRC ${CMAKE_CURRENT_SOURCE_DIR}/externals/MoltenVK/MoltenVK/MoltenVK/icd/MoltenVK_icd.json)
-    set(MVK_ICD_DST ${MVK_DST}/MoltenVK_icd.json)
-
-    add_custom_command(
-        OUTPUT ${MVK_ICD_DST}
-        DEPENDS ${MVK_ICD_SRC} ${MVK_DST}
-        COMMAND ${CMAKE_COMMAND} -E copy ${MVK_ICD_SRC} ${MVK_ICD_DST})
-    add_custom_command(
-        OUTPUT ${MVK_DYLIB_DST}
-        DEPENDS ${MVK_DYLIB_SRC} ${MVK_DST}
-        COMMAND ${CMAKE_COMMAND} -E copy ${MVK_DYLIB_SRC} ${MVK_DYLIB_DST})
-    add_custom_target(CopyMoltenVK DEPENDS ${MVK_ICD_DST} ${MVK_DYLIB_DST})
-    add_dependencies(CopyMoltenVK MoltenVK)
-    add_dependencies(shadps4 CopyMoltenVK)
-
     if (ARCHITECTURE STREQUAL "x86_64")
         # Reserve system-managed memory space.
         target_link_options(shadps4 PRIVATE -Wl,-ld_classic,-no_pie,-no_fixup_chains,-no_huge,-pagezero_size,0x4000,-segaddr,TCB_SPACE,0x4000,-segaddr,SYSTEM_MANAGED,0x400000,-segaddr,SYSTEM_RESERVED,0x7FFFFC000,-image_base,0x20000000000)
@@ -501,13 +462,13 @@ if (APPLE)
     target_link_libraries(shadps4 PRIVATE date::date-tz epoll-shim)
 endif()
 
-if (ENABLE_QT_GUI)
-    target_link_libraries(shadps4 PRIVATE Qt6::Widgets Qt6::Concurrent Qt6::Network Qt6::Multimedia)
-    add_definitions(-DENABLE_QT_GUI)
-    if (ENABLE_UPDATER)
-        add_definitions(-DENABLE_UPDATER)
-    endif()
+
+target_link_libraries(shadps4 PRIVATE Qt6::Widgets Qt6::Concurrent Qt6::Network Qt6::Multimedia)
+add_definitions(-DENABLE_QT_GUI)
+if (ENABLE_UPDATER)
+    add_definitions(-DENABLE_UPDATER)
 endif()
+
 
 if (WIN32)
     target_link_libraries(shadps4 PRIVATE mincore)
@@ -568,29 +529,22 @@ cmrc_add_resource_library(embedded-resources
         src/images/silver.png)
 target_link_libraries(shadps4 PRIVATE res::embedded)
 
-if (ENABLE_QT_GUI)
-    set_target_properties(shadps4 PROPERTIES
-#       WIN32_EXECUTABLE ON
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/dist/MacOSBundleInfo.plist.in"
-        MACOSX_BUNDLE_ICON_FILE "shadPS4.icns"
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "${APP_VERSION}"
+
+set_target_properties(shadps4 PROPERTIES
+    # WIN32_EXECUTABLE ON
+    MACOSX_BUNDLE ON
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/dist/MacOSBundleInfo.plist.in"
+    MACOSX_BUNDLE_ICON_FILE "shadPS4.icns"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${APP_VERSION}"
     )
 
-    set_source_files_properties(src/images/shadPS4.icns PROPERTIES
-        MACOSX_PACKAGE_LOCATION Resources)
-endif()
+set_source_files_properties(src/images/shadPS4.icns PROPERTIES
+    MACOSX_PACKAGE_LOCATION Resources)
+
 
 if (UNIX AND NOT APPLE)
-    if (ENABLE_QT_GUI)
-        find_package(OpenSSL REQUIRED)
-        target_link_libraries(shadps4 PRIVATE ${OPENSSL_LIBRARIES})
-    endif()
-endif()
-
-# Discord RPC
-if (ENABLE_DISCORD_RPC)
-    target_link_libraries(shadps4 PRIVATE discord-rpc)
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(shadps4 PRIVATE ${OPENSSL_LIBRARIES})
 endif()
 
 # Install rules

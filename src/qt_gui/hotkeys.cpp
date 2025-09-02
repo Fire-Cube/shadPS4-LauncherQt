@@ -10,7 +10,6 @@
 #include "common/logging/log.h"
 #include "common/path_util.h"
 #include "hotkeys.h"
-#include "input/input_handler.h"
 #include "ui_hotkeys.h"
 
 hotkeys::hotkeys(bool isGameRunning, QWidget* parent)
@@ -87,7 +86,7 @@ void hotkeys::EnableMappingButtons() {
 void hotkeys::SaveHotkeys(bool CloseOnSave) {
     const auto hotkey_file = Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "hotkeys.ini";
     if (!std::filesystem::exists(hotkey_file)) {
-        Input::createHotkeyFile(hotkey_file);
+        // Input::createHotkeyFile(hotkey_file);
     }
 
     QString controllerFullscreenString, controllerPauseString, controllerFpsString,
@@ -127,7 +126,7 @@ void hotkeys::SaveHotkeys(bool CloseOnSave) {
     }
     output_file.close();
 
-    Input::LoadHotkeyInputs();
+    // Input::LoadHotkeyInputs();
 
     if (CloseOnSave)
         QWidget::close();
@@ -136,7 +135,7 @@ void hotkeys::SaveHotkeys(bool CloseOnSave) {
 void hotkeys::LoadHotkeys() {
     const auto hotkey_file = Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "hotkeys.ini";
     if (!std::filesystem::exists(hotkey_file)) {
-        Input::createHotkeyFile(hotkey_file);
+        // Input::createHotkeyFile(hotkey_file);
     }
 
     QString controllerFullscreenString, controllerPauseString, controllerFpsString,
@@ -183,25 +182,25 @@ void hotkeys::CheckGamePad() {
         LOG_ERROR(Input, "Cannot get gamepad list: {}", SDL_GetError());
     }
 
-    int defaultIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
-                                                       Config::getDefaultControllerID());
-    int activeIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
-                                                      GamepadSelect::GetSelectedGamepad());
+    // int defaultIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
+    //                                                    Config::getDefaultControllerID());
+    // int activeIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
+    //                                                   GamepadSelect::GetSelectedGamepad());
 
-    if (!GameRunning) {
-        if (activeIndex != -1) {
-            h_gamepad = SDL_OpenGamepad(h_gamepads[activeIndex]);
-        } else if (defaultIndex != -1) {
-            h_gamepad = SDL_OpenGamepad(h_gamepads[defaultIndex]);
-        } else {
-            LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
-            h_gamepad = SDL_OpenGamepad(h_gamepads[0]);
-        }
-
-        if (!h_gamepad) {
-            LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
-        }
-    }
+    // if (!GameRunning) {
+    //     if (activeIndex != -1) {
+    //         h_gamepad = SDL_OpenGamepad(h_gamepads[activeIndex]);
+    //     } else if (defaultIndex != -1) {
+    //         h_gamepad = SDL_OpenGamepad(h_gamepads[defaultIndex]);
+    //     } else {
+    //         LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
+    //         h_gamepad = SDL_OpenGamepad(h_gamepads[0]);
+    //     }
+    //
+    //     if (!h_gamepad) {
+    //         LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
+    //     }
+    // }
 }
 
 void hotkeys::StartTimer(QPushButton*& button, bool isButton) {

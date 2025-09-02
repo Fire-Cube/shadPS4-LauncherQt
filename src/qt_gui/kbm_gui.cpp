@@ -10,7 +10,6 @@
 #include <SDL3/SDL_events.h>
 
 #include "common/path_util.h"
-#include "input/input_handler.h"
 #include "kbm_config_dialog.h"
 #include "kbm_gui.h"
 #include "kbm_help_dialog.h"
@@ -345,8 +344,8 @@ QString(tr("Cannot bind any unique input more than once. Duplicate inputs mapped
     Config::save(Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "config.toml");
 
     if (GameRunning) {
-        Config::GetUseUnifiedInputConfig() ? Input::ParseInputConfig("default")
-                                           : Input::ParseInputConfig(RunningGameSerial);
+        // Config::GetUseUnifiedInputConfig() ? Input::ParseInputConfig("default")
+        //                                    : Input::ParseInputConfig(RunningGameSerial);
     }
 
     if (close_on_save)

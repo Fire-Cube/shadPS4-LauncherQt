@@ -18,13 +18,15 @@
 #include "common/path_util.h"
 #include "common/scm_rev.h"
 #include "common/string_util.h"
+#include "common/singleton.h"
 #include "control_settings.h"
 #include "game_install_dialog.h"
 #include "hotkeys.h"
+#include <filesystem>
 #include "kbm_gui.h"
 #include "main_window.h"
 #include "settings_dialog.h"
-
+#include "fmt/format.h"
 #ifdef ENABLE_DISCORD_RPC
 #include "common/discord_rpc_handler.h"
 #endif
@@ -131,12 +133,8 @@ void MainWindow::CreateActions() {
 }
 
 void MainWindow::PauseGame() {
-    SDL_Event event;
-    SDL_memset(&event, 0, sizeof(event));
-    event.type = SDL_EVENT_TOGGLE_PAUSE;
-    is_paused = !is_paused;
     UpdateToolbarButtons();
-    SDL_PushEvent(&event);
+    // IPC
 }
 
 void MainWindow::toggleLabelsUnderIcons() {
@@ -149,10 +147,7 @@ void MainWindow::toggleLabelsUnderIcons() {
 }
 
 void MainWindow::toggleFullscreen() {
-    SDL_Event event;
-    SDL_memset(&event, 0, sizeof(event));
-    event.type = SDL_EVENT_TOGGLE_FULLSCREEN;
-    SDL_PushEvent(&event);
+    // IPC
 }
 
 QWidget* MainWindow::createButtonWithLabel(QPushButton* button, const QString& labelText,
@@ -1220,15 +1215,16 @@ void MainWindow::StartEmulator(std::filesystem::path path) {
         return;
     }
     isGameRunning = true;
-#ifdef __APPLE__
-    // SDL on macOS requires main thread.
-    Core::Emulator emulator;
-    emulator.Run(path);
-#else
-    std::thread emulator_thread([=] {
-        Core::Emulator emulator;
-        emulator.Run(path);
-    });
-    emulator_thread.detach();
-#endif
+    QString exe = R"(C:\Users\ben7\Desktop\shadPS4\fork\shadPS4\Build\x64-Clang-Release\shadps4.exe)";
+    QStringList args{
+        "--game",
+        QString::fromStdWString(path.wstring()) // std::filesystem::path -> QString (Unicode-sicher)
+    };
+
+    QString workDir = QFileInfo(exe).absolutePath();
+
+    bool ok = QProcess::startDetached(exe, args, workDir);
+    if (!ok) {
+        QMessageBox::critical(this, tr("Run Game"), tr("Couldn't start shad."));
+    }
 }

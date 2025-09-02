@@ -12,7 +12,7 @@
 
 #include "common/config.h"
 #include "common/scm_rev.h"
-#include "core/libraries/audio/audioout.h"
+// #include "core/libraries/audio/audioout.h"
 #include "qt_gui/compatibility_info.h"
 #ifdef ENABLE_DISCORD_RPC
 #include "common/discord_rpc_handler.h"
@@ -28,7 +28,6 @@
 #include "common/logging/filter.h"
 #include "settings_dialog.h"
 #include "ui_settings_dialog.h"
-#include "video_core/renderer_vulkan/vk_instance.h"
 
 QStringList languageNames = {"Arabic",
                              "Czech",
@@ -102,20 +101,6 @@ SettingsDialog::SettingsDialog(std::shared_ptr<gui_settings> gui_settings,
                         {tr("Input"), "Input"},       {tr("Paths"), "Paths"},
                         {tr("Debug"), "Debug"}};
     micMap = {{tr("None"), "None"}, {tr("Default Device"), "Default Device"}};
-
-    if (m_physical_devices.empty()) {
-        // Populate cache of physical devices.
-        Vulkan::Instance instance(false, false);
-        auto physical_devices = instance.GetPhysicalDevices();
-        for (const vk::PhysicalDevice physical_device : physical_devices) {
-            auto prop = physical_device.getProperties();
-            QString name = QString::fromUtf8(prop.deviceName, -1);
-            if (prop.apiVersion < Vulkan::TargetVulkanApiVersion) {
-                name += tr(" * Unsupported Vulkan Version");
-            }
-            m_physical_devices.push_back(name);
-        }
-    }
 
     // Add list of available GPUs
     ui->graphicsAdapterBox->addItem(tr("Auto Select")); // -1, auto selection
@@ -204,7 +189,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<gui_settings> gui_settings,
         connect(ui->horizontalVolumeSlider, &QSlider::valueChanged, this, [this](int value) {
             VolumeSliderChange(value);
             Config::setVolumeSlider(value);
-            Libraries::AudioOut::AdjustVol();
+            // Libraries::AudioOut::AdjustVol();
         });
 
 #ifdef ENABLE_UPDATER

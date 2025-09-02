@@ -63,16 +63,16 @@ bool MainWindow::Init() {
     std::string remote_host = Common::GetRemoteNameFromLink();
     if (Common::g_is_release) {
         if (remote_host == "shadps4-emu" || remote_url.length() == 0) {
-            window_title = fmt::format("shadPS4 v{}", Common::g_version);
+            window_title = fmt::format("shadPS4Launcher v{}", Common::g_version);
         } else {
-            window_title = fmt::format("shadPS4 {}/v{}", remote_host, Common::g_version);
+            window_title = fmt::format("shadPS4Launcher  {}/v{}", remote_host, Common::g_version);
         }
     } else {
         if (remote_host == "shadps4-emu" || remote_url.length() == 0) {
-            window_title = fmt::format("shadPS4 v{} {} {}", Common::g_version, Common::g_scm_branch,
+            window_title = fmt::format("shadPS4Launcher  v{} {} {}", Common::g_version, Common::g_scm_branch,
                                        Common::g_scm_desc);
         } else {
-            window_title = fmt::format("shadPS4 v{} {}/{} {}", Common::g_version, remote_host,
+            window_title = fmt::format("shadPS4Launcher  v{} {}/{} {}", Common::g_version, remote_host,
                                        Common::g_scm_branch, Common::g_scm_desc);
         }
     }
@@ -94,14 +94,6 @@ bool MainWindow::Init() {
     QString statusMessage = tr("Games: ") + QString::number(numGames) + " (" +
                             QString::number(duration.count()) + "ms)";
     statusBar->showMessage(statusMessage);
-
-#ifdef ENABLE_DISCORD_RPC
-    if (Config::getEnableDiscordRPC()) {
-        auto* rpc = Common::Singleton<DiscordRPCHandler::RPC>::Instance();
-        rpc->init();
-        rpc->setStatusIdling();
-    }
-#endif
 
     return true;
 }

@@ -17,7 +17,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-project(shadPS4 CXX C ASM ${ADDITIONAL_LANGUAGES})
+project(shadPS4Launcher CXX C ${ADDITIONAL_LANGUAGES})
 
 # Forcing PIE makes sure that the base address is high enough so that it doesn't clash with the PS4 memory.
 if(UNIX AND NOT APPLE)
@@ -31,8 +31,6 @@ if(UNIX AND NOT APPLE)
     endif()
 endif()
 
-option(ENABLE_QT_GUI "Enable the Qt GUI. If not selected then the emulator uses a minimal SDL-based UI instead" OFF)
-option(ENABLE_DISCORD_RPC "Enable the Discord RPC integration" ON)
 option(ENABLE_UPDATER "Enables the options to updater" ON)
 
 # First, determine whether to use CMAKE_OSX_ARCHITECTURES or CMAKE_SYSTEM_PROCESSOR.
@@ -282,12 +280,12 @@ if(ENABLE_QT_GUI)
 endif()
 
 set(CORE src/core/file_format/pfs.h
-        src/core/file_format/psf.cpp
-        src/core/file_format/psf.h
-        src/core/file_format/trp.cpp
-        src/core/file_format/trp.h
-        src/core/ipc/ipc.cpp
-        src/core/ipc/ipc.h
+         src/core/file_format/psf.cpp
+         src/core/file_format/psf.h
+         src/core/file_format/trp.cpp
+         src/core/file_format/trp.h
+         src/core/ipc/ipc.cpp
+         src/core/ipc/ipc.h
 )
 
 set(COMMON src/common/logging/backend.cpp
@@ -359,7 +357,7 @@ set(COMMON src/common/logging/backend.cpp
            src/common/va_ctx.h
            src/common/ntapi.h
            src/common/ntapi.cpp
-        src/common/memory_patcher.h
+           src/common/memory_patcher.h
            src/common/memory_patcher.cpp
            ${CMAKE_CURRENT_BINARY_DIR}/src/common/scm_rev.cpp
            src/common/scm_rev.h
@@ -437,44 +435,21 @@ set(QT_GUI src/qt_gui/about_dialog.cpp
 )
 endif()
 
-if (ENABLE_QT_GUI)
-    qt_add_executable(shadps4
-        ${AUDIO_CORE}
-        ${INPUT}
-        ${QT_GUI}
-        ${COMMON}
-        ${CORE}
-        src/main.cpp
-        src/images/shadPS4.icns
-    )
-else()
-    add_executable(shadps4
-        ${AUDIO_CORE}
-        ${IMGUI}
-        ${INPUT}
-        ${COMMON}
-        ${CORE}
-        ${SHADER_RECOMPILER}
-        ${VIDEO_CORE}
-        ${EMULATOR}
-        src/main.cpp
-        src/emulator.cpp
-        src/emulator.h
-        src/sdl_window.h
-        src/sdl_window.cpp
-    )
-endif()
+qt_add_executable(shadps4
+    ${AUDIO_CORE}
+    ${INPUT}
+    ${QT_GUI}
+    ${COMMON}
+    ${CORE}
+    src/main.cpp
+    src/images/shadPS4.icns
+)
 
 create_target_directory_groups(shadps4)
 
 target_link_libraries(shadps4 PRIVATE magic_enum::magic_enum fmt::fmt toml11::toml11 tsl::robin_map xbyak::xbyak  FFmpeg::ffmpeg half::half ZLIB::ZLIB PNG::PNG)
 target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 xxHash::xxhash Zydis::Zydis pugixml::pugixml stb::headers libusb::usb SDL3::SDL3 lfreist-hwinfo::hwinfo)
 
-target_compile_definitions(shadps4 PRIVATE IMGUI_USER_CONFIG="imgui/imgui_config.h")
-
-if (ENABLE_DISCORD_RPC)
-    target_compile_definitions(shadps4 PRIVATE ENABLE_DISCORD_RPC)
-endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     # Optional due to https://github.com/shadps4-emu/shadPS4/issues/1704

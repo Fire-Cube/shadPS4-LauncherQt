@@ -1210,7 +1210,7 @@ void MainWindow::StartEmulator(std::filesystem::path path) {
     QString exe = R"(C:\Users\ben7\Desktop\shadPS4\fork\shadPS4\Build\x64-Clang-Release\shadps4.exe)";
     QStringList args{
         "--game",
-        QString::fromStdWString(path.wstring()) // std::filesystem::path -> QString (Unicode-sicher)
+        QString::fromStdWString(path.wstring())
     };
 
     QString workDir = QFileInfo(exe).absolutePath();

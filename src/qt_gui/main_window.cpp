@@ -19,8 +19,8 @@
 #include "common/io_file.h"
 #include "common/path_util.h"
 #include "common/scm_rev.h"
-#include "common/string_util.h"
 #include "common/singleton.h"
+#include "common/string_util.h"
 #include "control_settings.h"
 #include "fmt/format.h"
 #include "game_install_dialog.h"
@@ -71,7 +71,7 @@ bool MainWindow::Init() {
                                        Common::g_scm_branch, Common::g_scm_desc);
         } else {
             window_title = fmt::format("shadPS4Launcher  v{} {}/{} {}", Common::g_version,
-                                   remote_host, Common::g_scm_branch, Common::g_scm_desc);
+                                       remote_host, Common::g_scm_branch, Common::g_scm_desc);
         }
     }
     setWindowTitle(QString::fromStdString(window_title));

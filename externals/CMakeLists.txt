@@ -37,25 +37,6 @@ file(GLOB LIBATRAC9_SOURCES LibAtrac9/C/src/*.c)
 add_library(LibAtrac9 STATIC ${LIBATRAC9_SOURCES})
 target_include_directories(LibAtrac9 INTERFACE LibAtrac9/C/src)
 
-# zlib
-if (NOT TARGET ZLIB::ZLIB)
-    set(ZLIB_ENABLE_TESTS OFF)
-    set(WITH_GTEST OFF)
-    set(WITH_NEW_STRATEGIES ON)
-    set(WITH_NATIVE_INSTRUCTIONS ON)
-    set(ZLIB_COMPAT ON CACHE BOOL "" FORCE)
-    include(FetchContent)
-    FetchContent_Declare(
-        ZLIB
-        SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zlib-ng"
-        OVERRIDE_FIND_PACKAGE
-    )
-    FetchContent_MakeAvailable(ZLIB)
-    add_library(ZLIB::ZLIB ALIAS zlib)
-    # libpng expects this variable to exist after its find_package(ZLIB)
-    set(ZLIB_INCLUDE_DIRS "${FETCHCONTENT_BASE_DIR}/zlib-build")
-endif()
-
 # SDL3
 if (NOT TARGET SDL3::SDL3)
     set(SDL_TEST_LIBRARY OFF)
@@ -63,20 +44,6 @@ if (NOT TARGET SDL3::SDL3)
     add_subdirectory(sdl3)
 endif()
 
-# Robin-map
-if (NOT TARGET tsl::robin_map)
-    add_subdirectory(robin-map)
-endif()
-
-# Xbyak
-if (NOT TARGET xbyak::xbyak)
-    add_subdirectory(xbyak)
-endif()
-
-# MagicEnum
-if (NOT TARGET magic_enum::magic_enum)
-    add_subdirectory(magic_enum)
-endif()
 
 # Toml11
 if (NOT TARGET toml11::toml11)
@@ -91,48 +58,9 @@ if (NOT TARGET toml11::toml11)
     endif()
 endif()
 
-# xxHash
-if (NOT TARGET xxHash::xxhash)
-    add_library(xxhash xxhash/xxhash.h xxhash/xxhash.c)
-    target_include_directories(xxhash PUBLIC xxhash)
-    add_library(xxHash::xxhash ALIAS xxhash)
-endif()
-
-# Zydis
-if (NOT TARGET Zydis::Zydis)
-    option(ZYDIS_BUILD_TOOLS "" OFF)
-    option(ZYDIS_BUILD_EXAMPLES "" OFF)
-    add_subdirectory(zydis)
-endif()
-
-# half
-if (NOT TARGET half::half)
-    add_library(half INTERFACE)
-    target_include_directories(half INTERFACE half/include)
-    add_library(half::half ALIAS half)
-endif()
-
-# libpng
-if (NOT TARGET PNG::PNG)
-    set(PNG_SHARED OFF CACHE BOOL "" FORCE)
-    set(PNG_STATIC ON CACHE BOOL "" FORCE)
-    set(PNG_TESTS OFF CACHE BOOL "" FORCE)
-    set(PNG_TOOLS OFF CACHE BOOL "" FORCE)
-    set(SKIP_INSTALL_ALL OFF CACHE BOOL "" FORCE)
-    add_subdirectory(libpng)
-    add_library(PNG::PNG ALIAS png_static)
-endif()
-
 # pugixml
 if (NOT TARGET pugixml::pugixml)
     add_subdirectory(pugixml)
-endif()
-
-# stb
-if (NOT TARGET stb::headers)
-    add_library(stb INTERFACE)
-    target_include_directories(stb INTERFACE stb)
-    add_library(stb::headers ALIAS stb)
 endif()
 
 # hwinfo

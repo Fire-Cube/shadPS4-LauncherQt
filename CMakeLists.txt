@@ -226,17 +226,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Boost 1.84.0 CONFIG)
 find_package(FFmpeg 5.1.2 MODULE)
 find_package(fmt 10.2.0 CONFIG)
-find_package(half 1.12.0 MODULE)
-find_package(magic_enum 0.9.7 CONFIG)
-find_package(PNG 1.6 MODULE)
 find_package(SDL3 3.1.2 CONFIG)
-find_package(stb MODULE)
 find_package(toml11 4.2.0 CONFIG)
-find_package(tsl-robin-map 1.3.0 CONFIG)
-find_package(xbyak 7.07 CONFIG)
-find_package(xxHash 0.8.2 MODULE)
-find_package(ZLIB 1.3 MODULE)
-find_package(Zydis 5.0.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 if (APPLE)
     find_package(date 3.0.1 CONFIG)
@@ -309,9 +300,7 @@ set(COMMON src/common/logging/backend.cpp
            src/common/config.h
            src/common/cstring.h
            src/common/debug.h
-           src/common/decoder.cpp
-           src/common/decoder.h
-           src/common/elf_info.h
+        src/common/elf_info.h
            src/common/endian.h
            src/common/enum.h
            src/common/io_file.cpp
@@ -342,9 +331,7 @@ set(COMMON src/common/logging/backend.cpp
            src/common/slot_vector.h
            src/common/spin_lock.cpp
            src/common/spin_lock.h
-           src/common/stb.cpp
-           src/common/stb.h
-           src/common/string_literal.h
+        src/common/string_literal.h
            src/common/string_util.cpp
            src/common/string_util.h
            src/common/thread.cpp
@@ -439,8 +426,8 @@ qt_add_executable(shadps4
 
 create_target_directory_groups(shadps4)
 
-target_link_libraries(shadps4 PRIVATE magic_enum::magic_enum fmt::fmt toml11::toml11 tsl::robin_map xbyak::xbyak  FFmpeg::ffmpeg half::half ZLIB::ZLIB PNG::PNG)
-target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 xxHash::xxhash Zydis::Zydis pugixml::pugixml stb::headers SDL3::SDL3 lfreist-hwinfo::hwinfo)
+target_link_libraries(shadps4 PRIVATE fmt::fmt toml11::toml11 FFmpeg::ffmpeg)
+target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 pugixml::pugixml SDL3::SDL3 lfreist-hwinfo::hwinfo)
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

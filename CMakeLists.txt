@@ -274,6 +274,10 @@ set(CORE src/core/file_format/pfs.h
          src/core/ipc/ipc.h
 )
 
+set(INPUT src/input/controller.h
+          src/input/controller.cpp
+)
+
 set(COMMON src/common/logging/backend.cpp
            src/common/logging/backend.h
            src/common/logging/filter.cpp
@@ -297,7 +301,7 @@ set(COMMON src/common/logging/backend.cpp
            src/common/config.h
            src/common/cstring.h
            src/common/debug.h
-        src/common/elf_info.h
+           src/common/elf_info.h
            src/common/endian.h
            src/common/enum.h
            src/common/io_file.cpp
@@ -328,7 +332,7 @@ set(COMMON src/common/logging/backend.cpp
            src/common/slot_vector.h
            src/common/spin_lock.cpp
            src/common/spin_lock.h
-        src/common/string_literal.h
+           src/common/string_literal.h
            src/common/string_util.cpp
            src/common/string_util.h
            src/common/thread.cpp

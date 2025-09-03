@@ -10,13 +10,13 @@
 #include <SDL3/SDL.h>
 #include <fmt/format.h>
 
+#include <hwinfo/gpu.h>
+
 #include "common/config.h"
 #include "common/scm_rev.h"
-// #include "core/libraries/audio/audioout.h"
 #include "qt_gui/compatibility_info.h"
 #ifdef ENABLE_DISCORD_RPC
-#include "common/discord_rpc_handler.h"
-#include "common/singleton.h"
+
 #endif
 #ifdef ENABLE_UPDATER
 #include "check_update.h"
@@ -101,6 +101,12 @@ SettingsDialog::SettingsDialog(std::shared_ptr<gui_settings> gui_settings,
                         {tr("Input"), "Input"},       {tr("Paths"), "Paths"},
                         {tr("Debug"), "Debug"}};
     micMap = {{tr("None"), "None"}, {tr("Default Device"), "Default Device"}};
+
+    if (m_physical_devices.empty()) {
+        for (const auto& GPU : hwinfo::getAllGPUs()) {
+            m_physical_devices.push_back(QString::fromStdString(GPU.name()));
+        }
+    };
 
     // Add list of available GPUs
     ui->graphicsAdapterBox->addItem(tr("Auto Select")); // -1, auto selection

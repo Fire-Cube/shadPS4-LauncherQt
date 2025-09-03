@@ -5,6 +5,8 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QPushButton>
+
+#include "input/controller.h"
 #include "common/logging/log.h"
 #include "common/path_util.h"
 #include "control_settings.h"
@@ -661,8 +663,8 @@ void ControlSettings::UpdateLightbarColor() {
 }
 
 void ControlSettings::ActiveControllerChanged(int value) {
-    // GamepadSelect::SetSelectedGamepad(GamepadSelect::GetGUIDString(gamepads, value));
-    // QString GUID = QString::fromStdString(GamepadSelect::GetSelectedGamepad()).right(16);
+    Input::SetSelectedGamepad(Input::GetGUIDString(gamepads, value));
+    QString GUID = QString::fromStdString(Input::GetSelectedGamepad()).right(16);
     ui->ActiveGamepadLabel->setText("ID: Todo");
 
     if (gamepad) {
@@ -689,61 +691,61 @@ void ControlSettings::CheckGamePad() {
         LOG_ERROR(Input, "Cannot get gamepad list: {}", SDL_GetError());
     }
 
-    // QString defaultGUID = "";
-    // int defaultIndex =
-    //     GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count, Config::getDefaultControllerID());
-    // int activeIndex = GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count,
-    //                                                   GamepadSelect::GetSelectedGamepad());
-    //
-    // if (!GameRunning) {
-    //     if (activeIndex != -1) {
-    //         gamepad = SDL_OpenGamepad(gamepads[activeIndex]);
-    //     } else if (defaultIndex != -1) {
-    //         gamepad = SDL_OpenGamepad(gamepads[defaultIndex]);
-    //     } else {
-    //         LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
-    //         gamepad = SDL_OpenGamepad(gamepads[0]);
-    //     }
-    //
-    //     if (!gamepad) {
-    //         LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
-    //     }
-    // }
+    QString defaultGUID = "";
+    int defaultIndex =
+        Input::GetIndexfromGUID(gamepads, gamepad_count, Config::getDefaultControllerID());
+    int activeIndex = Input::GetIndexfromGUID(gamepads, gamepad_count,
+                                                      Input::GetSelectedGamepad());
 
-    // if (!gamepads || gamepad_count == 0) {
-    //     ui->ActiveGamepadBox->addItem("No gamepads detected");
-    //     ui->ActiveGamepadBox->setCurrentIndex(0);
-    //     return;
-    // } else {
-    //     for (int i = 0; i < gamepad_count; i++) {
-    //         QString name = SDL_GetGamepadNameForID(gamepads[i]);
-    //         ui->ActiveGamepadBox->addItem(QString("%1: %2").arg(QString::number(i + 1), name));
-    //     }
-    // }
-    //
-    // if (defaultIndex != -1) {
-    //     defaultGUID =
-    //         QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, defaultIndex)).right(16);
-    //     ui->DefaultGamepadName->setText(SDL_GetGamepadNameForID(gamepads[defaultIndex]));
-    //     ui->DefaultGamepadLabel->setText(tr("ID: ") + defaultGUID);
-    // } else {
-    //     ui->DefaultGamepadName->setText("Default controller not connected");
-    //     ui->DefaultGamepadLabel->setText(tr("n/a"));
-    // }
-    //
-    // if (activeIndex != -1) {
-    //     QString GUID =
-    //         QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, activeIndex)).right(16);
-    //     ui->ActiveGamepadLabel->setText(tr("ID: ") + GUID);
-    //     ui->ActiveGamepadBox->setCurrentIndex(activeIndex);
-    // } else if (defaultIndex != -1) {
-    //     ui->ActiveGamepadLabel->setText(defaultGUID);
-    //     ui->ActiveGamepadBox->setCurrentIndex(defaultIndex);
-    // } else {
-    //     QString GUID = QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, 0)).right(16);
-    //     ui->ActiveGamepadLabel->setText("ID: " + GUID);
-    //     ui->ActiveGamepadBox->setCurrentIndex(0);
-    // }
+    if (!GameRunning) {
+        if (activeIndex != -1) {
+            gamepad = SDL_OpenGamepad(gamepads[activeIndex]);
+        } else if (defaultIndex != -1) {
+            gamepad = SDL_OpenGamepad(gamepads[defaultIndex]);
+        } else {
+            LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
+            gamepad = SDL_OpenGamepad(gamepads[0]);
+        }
+
+        if (!gamepad) {
+            LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
+        }
+    }
+
+    if (!gamepads || gamepad_count == 0) {
+        ui->ActiveGamepadBox->addItem("No gamepads detected");
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+        return;
+    } else {
+        for (int i = 0; i < gamepad_count; i++) {
+            QString name = SDL_GetGamepadNameForID(gamepads[i]);
+            ui->ActiveGamepadBox->addItem(QString("%1: %2").arg(QString::number(i + 1), name));
+        }
+    }
+
+    if (defaultIndex != -1) {
+        defaultGUID =
+            QString::fromStdString(Input::GetGUIDString(gamepads, defaultIndex)).right(16);
+        ui->DefaultGamepadName->setText(SDL_GetGamepadNameForID(gamepads[defaultIndex]));
+        ui->DefaultGamepadLabel->setText(tr("ID: ") + defaultGUID);
+    } else {
+        ui->DefaultGamepadName->setText("Default controller not connected");
+        ui->DefaultGamepadLabel->setText(tr("n/a"));
+    }
+
+    if (activeIndex != -1) {
+        QString GUID =
+            QString::fromStdString(Input::GetGUIDString(gamepads, activeIndex)).right(16);
+        ui->ActiveGamepadLabel->setText(tr("ID: ") + GUID);
+        ui->ActiveGamepadBox->setCurrentIndex(activeIndex);
+    } else if (defaultIndex != -1) {
+        ui->ActiveGamepadLabel->setText(defaultGUID);
+        ui->ActiveGamepadBox->setCurrentIndex(defaultIndex);
+    } else {
+        QString GUID = QString::fromStdString(Input::GetGUIDString(gamepads, 0)).right(16);
+        ui->ActiveGamepadLabel->setText("ID: " + GUID);
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+    }
 }
 
 void ControlSettings::DisableMappingButtons() {

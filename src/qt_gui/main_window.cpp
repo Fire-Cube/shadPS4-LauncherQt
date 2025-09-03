@@ -14,22 +14,20 @@
 #ifdef ENABLE_UPDATER
 #include "check_update.h"
 #endif
+
+#include <filesystem>
 #include "common/io_file.h"
 #include "common/path_util.h"
 #include "common/scm_rev.h"
 #include "common/string_util.h"
 #include "common/singleton.h"
 #include "control_settings.h"
+#include "fmt/format.h"
 #include "game_install_dialog.h"
 #include "hotkeys.h"
-#include <filesystem>
 #include "kbm_gui.h"
 #include "main_window.h"
 #include "settings_dialog.h"
-#include "fmt/format.h"
-#ifdef ENABLE_DISCORD_RPC
-#include "common/discord_rpc_handler.h"
-#endif
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -69,11 +67,11 @@ bool MainWindow::Init() {
         }
     } else {
         if (remote_host == "shadps4-emu" || remote_url.length() == 0) {
-            window_title = fmt::format("shadPS4Launcher  v{} {} {}", Common::g_version, Common::g_scm_branch,
-                                       Common::g_scm_desc);
+            window_title = fmt::format("shadPS4Launcher  v{} {} {}", Common::g_version,
+                Common::g_scm_branch, Common::g_scm_desc);
         } else {
-            window_title = fmt::format("shadPS4Launcher  v{} {}/{} {}", Common::g_version, remote_host,
-                                       Common::g_scm_branch, Common::g_scm_desc);
+            window_title = fmt::format("shadPS4Launcher  v{} {}/{} {}", Common::g_version,
+                remote_host, Common::g_scm_branch, Common::g_scm_desc);
         }
     }
     setWindowTitle(QString::fromStdString(window_title));
@@ -1208,10 +1206,7 @@ void MainWindow::StartEmulator(std::filesystem::path path) {
     }
     isGameRunning = true;
     QString exe = m_gui_settings->GetValue(gui::gen_shadFolder).toString() + "/shadps4.exe";
-    QStringList args{
-        "--game",
-        QString::fromStdWString(path.wstring())
-    };
+    QStringList args{"--game", QString::fromStdWString(path.wstring())};
 
     QString workDir = QFileInfo(exe).absolutePath();
 

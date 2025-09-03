@@ -324,8 +324,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<gui_settings> gui_settings,
             const auto shad_folder_path = m_gui_settings->GetValue(gui::gen_shadFolder).toString();
             QString initial_path;
 
-            QString shad_folder_path_string =
-                QFileDialog::getExistingDirectory(this, tr("Select the shadPS4 folder"), initial_path);
+            QString shad_folder_path_string = QFileDialog::getExistingDirectory(
+                this, tr("Select the shadPS4 folder"), initial_path);
 
             auto file_path = Common::FS::PathFromQString(shad_folder_path_string);
             if (!file_path.empty()) {

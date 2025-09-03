@@ -6,10 +6,10 @@
 #include <QMessageBox>
 #include <QPushButton>
 
-#include "input/controller.h"
 #include "common/logging/log.h"
 #include "common/path_util.h"
 #include "control_settings.h"
+#include "input/controller.h"
 #include "ui_control_settings.h"
 
 ControlSettings::ControlSettings(std::shared_ptr<GameInfoClass> game_info_get, bool isGameRunning,
@@ -124,10 +124,10 @@ ControlSettings::ControlSettings(std::shared_ptr<GameInfoClass> game_info_get, b
 
     connect(ui->DefaultGamepadButton, &QPushButton::clicked, this, [this]() {
         ui->DefaultGamepadName->setText(ui->ActiveGamepadBox->currentText());
-        // std::string GUID =
-            // GamepadSelect::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
+        std::string GUID =
+           Input::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
         ui->DefaultGamepadLabel->setText(tr("ID: ToDo"));
-        // Config::setDefaultControllerID(GUID);
+        Config::setDefaultControllerID(GUID);
         Config::save(Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "config.toml");
         QMessageBox::information(this, tr("Default Controller Selected"),
                                  tr("Active controller set as default"));
@@ -694,8 +694,7 @@ void ControlSettings::CheckGamePad() {
     QString defaultGUID = "";
     int defaultIndex =
         Input::GetIndexfromGUID(gamepads, gamepad_count, Config::getDefaultControllerID());
-    int activeIndex = Input::GetIndexfromGUID(gamepads, gamepad_count,
-                                                      Input::GetSelectedGamepad());
+    int activeIndex = Input::GetIndexfromGUID(gamepads, gamepad_count, Input::GetSelectedGamepad());
 
     if (!GameRunning) {
         if (activeIndex != -1) {

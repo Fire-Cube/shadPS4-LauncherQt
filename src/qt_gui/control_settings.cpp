@@ -124,8 +124,7 @@ ControlSettings::ControlSettings(std::shared_ptr<GameInfoClass> game_info_get, b
 
     connect(ui->DefaultGamepadButton, &QPushButton::clicked, this, [this]() {
         ui->DefaultGamepadName->setText(ui->ActiveGamepadBox->currentText());
-        std::string GUID =
-           Input::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
+        std::string GUID = Input::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
         ui->DefaultGamepadLabel->setText(tr("ID: ToDo"));
         Config::setDefaultControllerID(GUID);
         Config::save(Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "config.toml");

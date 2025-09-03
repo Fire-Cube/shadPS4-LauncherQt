@@ -66,13 +66,3 @@ endif()
 # hwinfo
 set(HWINFO_STATIC ON)
 add_subdirectory(hwinfo)
-
-# Apple-only dependencies
-if (APPLE)
-    # date
-    if (NOT TARGET date::date-tz)
-        option(BUILD_TZ_LIB "" ON)
-        option(USE_SYSTEM_TZ_DB "" ON)
-        add_subdirectory(date)
-    endif()
-endif()

@@ -445,8 +445,6 @@ if (APPLE)
         target_link_options(shadps4 PRIVATE -Wl,-ld_classic,-no_pie,-no_fixup_chains,-no_huge,-pagezero_size,0x4000,-segaddr,TCB_SPACE,0x4000,-segaddr,SYSTEM_MANAGED,0x400000,-segaddr,SYSTEM_RESERVED,0x7FFFFC000,-image_base,0x20000000000)
     endif()
 
-    # Replacement for std::chrono::time_zone
-    target_link_libraries(shadps4 PRIVATE date::date-tz)
 endif()
 
 

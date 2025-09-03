@@ -224,14 +224,11 @@ endif ()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Boost 1.84.0 CONFIG)
-find_package(FFmpeg 5.1.2 MODULE)
 find_package(fmt 10.2.0 CONFIG)
 find_package(SDL3 3.1.2 CONFIG)
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
-if (APPLE)
-    find_package(date 3.0.1 CONFIG)
-endif()
+
 list(POP_BACK CMAKE_MODULE_PATH)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
@@ -426,7 +423,7 @@ qt_add_executable(shadps4
 
 create_target_directory_groups(shadps4)
 
-target_link_libraries(shadps4 PRIVATE fmt::fmt toml11::toml11 FFmpeg::ffmpeg)
+target_link_libraries(shadps4 PRIVATE fmt::fmt toml11::toml11)
 target_link_libraries(shadps4 PRIVATE Boost::headers LibAtrac9 pugixml::pugixml SDL3::SDL3 lfreist-hwinfo::hwinfo)
 
 
